@@ -9,8 +9,20 @@ const ModalButton = () => {
     const [dob, setDob] = useState('');
     const [validationError, setValidationError] = useState('');
 
-    const handleClose = () => setShow(false);
+    const handleClose = () => {
+        setShow(false);
+        resetForm();
+    };
+
     const handleShow = () => setShow(true);
+
+    const resetForm = () => {
+        setUsername('');
+        setEmail('');
+        setPhone('');
+        setDob('');
+        setValidationError('');
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,12 +54,7 @@ const ModalButton = () => {
         }
 
         // All validations passed, close modal and reset form
-        setShow(false);
-        setUsername('');
-        setEmail('');
-        setPhone('');
-        setDob('');
-        setValidationError('');
+        handleClose();
     };
 
 
@@ -58,10 +65,10 @@ const ModalButton = () => {
                 Open Form
             </Button>
 
-            <Modal show={show} onHide={handleClose} backdrop="static" keyboard={false}>
-                {/* <Modal.Header closeButton>
-                    <Modal.Title>Modal Form</Modal.Title>
-                </Modal.Header> */}
+            <Modal show={show} onHide={handleClose} backdrop={true} keyboard={true}>
+                <Modal.Header>
+                    <Modal.Title>Fill Details</Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
                     <Form onSubmit={handleSubmit}>
                         <Form.Group controlId="username">
@@ -101,7 +108,6 @@ const ModalButton = () => {
                             />
                         </Form.Group>
                         {validationError && <p className="text-danger">{validationError}</p>}
-                        <br />
                         <Button variant="primary" type="submit" className="submit-button">
                             Submit
                         </Button>
