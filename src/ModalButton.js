@@ -65,7 +65,7 @@ const ModalButton = () => {
                 Open Form
             </Button>
 
-            <Modal show={show} onHide={handleClose} backdrop={true} keyboard={true}>
+            <Modal show={show} onHide={handleClose} force={true}>
                 <Modal.Header>
                     <Modal.Title>Fill Details</Modal.Title>
                 </Modal.Header>
