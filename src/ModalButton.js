@@ -1,119 +1,119 @@
 import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
+// import { Modal, Button, Form } from 'react-bootstrap';
+import './ModalButton.css';
 
 const ModalButton = () => {
-    const [show, setShow] = useState(false);
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [dob, setDob] = useState('');
-    const [validationError, setValidationError] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        phone: '',
+        dob: '',
+    });
+    const [errors, setErrors] = useState('');
 
-    const handleClose = () => {
-        setShow(false);
-        resetForm();
+    const openModal = () => {
+        setIsOpen(true);
     };
 
-    const handleShow = () => setShow(true);
-
-    const resetForm = () => {
-        setUsername('');
-        setEmail('');
-        setPhone('');
-        setDob('');
-        setValidationError('');
+    const closeModal = () => {
+        setIsOpen(false);
+        setFormData({ username: '', email: '', phone: '', dob: '' });
+        setErrors({ username: false, email: false, phone: false, dob: false });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Basic validation
-        if (!username || !email || !phone || !dob) {
-            setValidationError('Please fill out all fields.');
+        // Validate form fields
+        let formValid = true;
+        // const newErrors = { ...errors };
+
+        if (formData.username === '' || formData.email === '' || formData.phone === '' || formData.dob === '') {
+            setErrors('Please fill all fields!');
+            formValid = false;
             return;
         }
 
-        // Email validation
-        if (!email.includes('@')) {
-            alert('Invalid email. Please check your email address.');
-            return;
-        }
+        // if (!formData.email.includes('@')) {
+        //     alert('');
+        //     formValid = false;
+        //     return;
+        // }
 
-        // Phone number validation
-        if (!/^\d{10}$/.test(phone)) {
+        if (formData.phone.length !== 10 || isNaN(formData.phone)) {
             alert('Invalid phone number. Please enter a 10-digit phone number.');
+            formValid = false;
             return;
         }
 
-        // Date of birth validation (simple check for future date)
-        const currentDate = new Date();
-        const selectedDate = new Date(dob);
-        if (selectedDate > currentDate) {
-            alert('Invalid date of birth. Please select a date in the past.');
+        const today = new Date();
+        const dobDate = new Date(formData.dob);
+        if (dobDate >= today) {
+            alert('Invalid date of birth. Date of birth cannot be in future.');
+            formValid = false;
             return;
         }
 
-        // All validations passed, close modal and reset form
-        handleClose();
+        if (formValid) {
+            alert('Form submitted successfully!');
+            closeModal();
+        }
     };
-
 
     return (
         <div>
             <h1>User Details Modal</h1>
-            <Button variant="primary" onClick={handleShow}>
-                Open Form
-            </Button>
+            <button onClick={openModal} className="OpenModalButton">Open Form</button>
 
-            <Modal show={show} onHide={handleClose} force={true}>
-                <Modal.Header>
-                    <Modal.Title>Fill Details</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleSubmit}>
-                        <Form.Group controlId="username">
-                            <Form.Label>Username</Form.Label>
-                            <Form.Control
+            {isOpen && (
+                <div className="modal" onClick={closeModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <h2>Fill Details</h2>
+                        <form onSubmit={handleSubmit}>
+                            <label htmlFor="username">Username:</label>
+                            <input
                                 type="text"
-                                placeholder="Enter username"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                id="username"
+                                required
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                             />
-                        </Form.Group>
-                        <Form.Group controlId="email">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control
+
+                            <label htmlFor="email">Email:</label>
+                            <input
                                 type="email"
-                                placeholder="Enter email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                id="email"
+                                required
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             />
-                        </Form.Group>
-                        <Form.Group controlId="phone">
-                            <Form.Label>Phone Number</Form.Label>
-                            <Form.Control
+
+                            <label htmlFor="phone">Phone Number:</label>
+                            <input
                                 type="text"
-                                placeholder="Enter phone number"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                id="phone"
+                                required
+                                value={formData.phone}
+                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                             />
-                        </Form.Group>
-                        <Form.Group controlId="dob">
-                            <Form.Label>Date of Birth</Form.Label>
-                            <Form.Control
+
+                            <label htmlFor="dob">Date of Birth:</label>
+                            <input
                                 type="date"
-                                placeholder="Enter date of birth"
-                                value={dob}
-                                onChange={(e) => setDob(e.target.value)}
+                                id="dob"
+                                required
+                                value={formData.dob}
+                                onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                             />
-                        </Form.Group>
-                        {validationError && <p className="text-danger">{validationError}</p>}
-                        <Button variant="primary" type="submit" className="submit-button">
-                            Submit
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
+                            {errors && <p>errors</p>}
+                            <button type="submit" className="submit-button">
+                                Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
